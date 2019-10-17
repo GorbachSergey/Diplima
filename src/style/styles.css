@@ -1,58 +1,61 @@
 @import "./fonts.css";
 @import "./reset.css";
-@import url('https://fonts.googleapis.com/css?family=Inconsolata&display=swap');
+@import url("https://fonts.googleapis.com/css?family=Inconsolata&display=swap");
 
-
-header{
+header {
     min-height: 100px;
     background: no-repeat url(../images/header.png) rgb(0, 82, 142);
     background-position: 10%, top;
 }
 
 body {
-    font-family: 'PT_Sans', sans-serif;
+    font-family: "PT_Sans", sans-serif;
     background: #fafafa;
     background: repeat url(../images/background.png);
 }
 
-footer{
+footer {
     min-height: 50px;
     background-color: rgb(0, 82, 142);
 }
 
-footer p{
+footer p {
     color: #fff;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: "Courier New", Courier, monospace;
     text-align: center;
     padding-top: 10px;
 }
 
-.wrapper_login{
-    display:flex;
+.wrapper_login {
+    display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items:center;
+    align-items: center;
     min-height: calc(100vh - 150px);
 }
 
-#loginForm{
+#loginForm {
     width: 30%;
 }
 
 .loader {
-    border: 3px solid #0f9bc5; 
-    border-top: 3px solid #000000; 
+    border: 3px solid #0f9bc5;
+    border-top: 3px solid #000000;
     border-radius: 50%;
     width: 40px;
     height: 40px;
     margin: 10px auto;
     animation: spin 1s linear infinite;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
 
 p {
     font-size: 1.1em;
@@ -78,7 +81,6 @@ a:focus {
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-
 /* ---------------------------------------------------
     SIDEBAR STYLE
 ----------------------------------------------------- */
@@ -93,7 +95,7 @@ a:focus {
     min-width: 630px;
     max-width: 630px;
     /* background: #fafafa; */
-    font-family: 'Inconsolata';
+    font-family: "Inconsolata";
     color: #000;
     font-size: 14px;
     font-weight: bold;
@@ -121,21 +123,34 @@ a:focus {
 .submenu > li {
     padding: 5px;
     margin-left: 15px;
-    font-size: 13px;
-   
 }
 
 .submenu > li:hover {
     color: rgb(0, 82, 142);
     background: red;
 }
+.menu_item {
+    position: relative;
+}
 
-
-.dropdown-toggle::after {
+.menu_item::after {
+    content: url("../images/sort-down.png");
     display: block;
     position: absolute;
-    top: 50%;
-    right: 20px;
+    top: 30px;
+    left: 95%;
+    transform: translateY(-50%);
+}
+
+.menu_sub_item{
+    position: relative;
+}
+.menu_sub_item::after {
+    content: url("../images/sort-down.png");
+    display: block;
+    position: absolute;
+    top: 25px;
+    left: 95%;
     transform: translateY(-50%);
 }
 
@@ -152,14 +167,14 @@ a:focus {
     transition: all 0.3s;
 }
 
-#sidebarCollapse span{
+#sidebarCollapse span {
     display: block;
     width: 30px;
     height: 5px;
     background: #000;
-    margin:3px 0px; 
+    margin: 3px 0px;
 }
 
-#sidebarCollapse:hover{
+#sidebarCollapse:hover {
     cursor: pointer;
 }

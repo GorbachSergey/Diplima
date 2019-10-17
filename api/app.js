@@ -18,6 +18,7 @@ app.use(function(req, response, next) {
 app.use("/institut", routes.institutRouter);
 app.use("/teacher", routes.teacherRouter);
 app.use("/specialty", routes.specialtyRouter);
+app.use("/group", routes.groupRouter);
 
 model.sequelize
     .sync()

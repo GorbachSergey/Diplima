@@ -10,7 +10,6 @@ sidebarMenu.addEventListener("click", onSidebarMenuClick);
 function DOMLoaded() {
     sendRequest("GET", "institut").then(instituts => {
         displayInstitutList(instituts);
-        document.getElementsByClassName("loader")[0].remove();
     });
 }
 
@@ -24,18 +23,21 @@ function displayInstitutList(instituts) {
 
 function displaySpecialtyList(institut, specialties) {
     let ul = document.createElement("ul");
-    ul.className = "list-unstyled";
+    ul.className = "submenu";
     ul.id = institut.dataset.type + institut.dataset.id;
     specialties.forEach(element => {
         let item = getMenuItem("specialty", element);
         ul.appendChild(item);
     });
-    institut.after(ul);
+    institut.appendChild(ul);
 }
 
-function getMenuItem(href, item) {
+function getMenuItem(type, item) {
     let li = document.createElement("li");
-    li.innerHTML = `<a href="#${href}${item.id}" data-type="${href}" data-id="${item.id}" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">${item.name}</a>`;
+    li.setAttribute("aria-expanded", "false");
+    li.setAttribute("data-type", type);
+    li.setAttribute("data-id", item.id);
+    li.innerHTML = item.name;
     return li;
 }
 
@@ -44,25 +46,28 @@ function onSidebarMenuClick(event) {
     if (target.hasAttribute("aria-expanded")) {
         let visible = target.getAttribute("aria-expanded");
         if (visible == "false") {
-            let loader = document.createElement("div");
-            loader.className = "loader";
-            target.after(loader);
-            let loadType = null;
-            switch (target.dataset.type) {
-                case "institut":
-                    loadType = "specialty";
-                    break;
-            }
+            target.setAttribute("aria-expanded", "true");
+            if (target.firstElementChild) {
+                target.firstElementChild.style.display = "";
+            } else {
+                let loadType = null;
+                switch (target.dataset.type) {
+                    case "institut":
+                        loadType = "specialty";
+                        break;
+                }
 
-            sendRequest("GET", `${loadType}?id=${target.dataset.id}`).then(result => {
-                displaySpecialtyList(target, result);
-            //displayInstitutList(instituts);
-            //document.getElementsByClassName("loader")[0].remove();
-            });
-        
+                sendRequest("GET", `${loadType}?id=${target.dataset.id}`).then(
+                    result => {
+                        displaySpecialtyList(target, result);
+                        //displayInstitutList(instituts);
+                        //document.getElementsByClassName("loader")[0].remove();
+                    }
+                );
+            }
         } else {
-            let loader = document.getElementsByClassName("loader");
-            loader[0].remove();
+            target.setAttribute("aria-expanded", "false");
+            target.firstElementChild.style.display = "none";
         }
     }
 }
