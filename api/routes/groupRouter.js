@@ -1,5 +1,5 @@
 const express = require("express");
-const groupController = require("../controllers/gorupController");
+const groupController = require("../controllers/groupController");
 const authMiddleware = require("../middleware/auth");
 const groupRouter = express.Router();
 groupRouter.get("/", groupController.getGroups);
