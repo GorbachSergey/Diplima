@@ -20,8 +20,8 @@ exports.getSpecialtiesByFacultyId = function(request, response) {
 
 exports.addSpecialty = function(request, response) {
     if (!request.body) return response.sendStatus(400);
-    const { code, name, id } = request.body;
-    model.Institut.findByPk(id)
+    const { code, name, instId } = request.body;
+    model.Institut.findByPk(instId)
         .then(institut => {
             if (!institut) response.json({ error: "Institut not found!" });
             institut

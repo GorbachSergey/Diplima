@@ -44,8 +44,8 @@ exports.getGroupsBySpecialtyIdAndCourse = function(request, response) {
 
 exports.addGroup = function(request, response) {
     if (!request.body) return response.sendStatus(400);
-    const { id, name, course} = request.body;
-    model.Specialty.findByPk(id)
+    const { specId, name, course} = request.body;
+    model.Specialty.findByPk(specId)
         .then(spec => {
             if (!spec) response.json({ error: "Specialty not found!" });
             spec
@@ -54,6 +54,41 @@ exports.addGroup = function(request, response) {
                     response.json({ status: "OK" });
                 })
                 .catch(err => res.json({ status: "Error" }));
+        })
+        .catch(err => {
+            res.json({ status: "Error" });
+        });
+};
+
+exports.removeGroup = function(request, response) {
+    if (!request.body) return response.sendStatus(400);
+    const { id } = request.body;
+    model.Group.destroy({
+        where: {
+            id: id
+        }
+    })
+        .then(result => {
+            response.json({ status: "OK" });
+        })
+        .catch(err => {
+            res.json({ status: "Error" });
+        });
+};
+
+exports.updateGroup = function(request, response) {
+    if (!request.body) return response.sendStatus(400);
+    const { id, name, course } = request.body;
+    model.Group.update(
+        { name: name, course: course },
+        {
+            where: {
+                id: id
+            }
+        }
+    )
+        .then(result => {
+            response.json({ status: "OK" });
         })
         .catch(err => {
             res.json({ status: "Error" });

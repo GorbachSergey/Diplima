@@ -5,4 +5,6 @@ const groupRouter = express.Router();
 groupRouter.get("/", groupController.getGroups);
 groupRouter.get("/course", groupController.getGroupsBySpecialtyIdAndCourse);
 groupRouter.post("/create", authMiddleware, groupController.addGroup);
+groupRouter.post("/delete", authMiddleware, groupController.removeGroup);
+groupRouter.post("/update", authMiddleware, groupController.updateGroup);
 module.exports = groupRouter;
