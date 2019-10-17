@@ -24,9 +24,9 @@ exports.getGroupsByCourse = function(request, response) {
 };
 
 exports.getGroupsBySpecialtyIdAndCourse = function(request, response) {
-    let id = request.query.id;
+    let specId = request.query.specId;
     let course = request.query.course;
-    model.Specialty.findByPk(id)
+    model.Specialty.findByPk(specId)
         .then(spec => {
             if (!spec) response.json({ error: "Specialty not found!" });
             spec

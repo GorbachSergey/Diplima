@@ -19,6 +19,7 @@ app.use("/institut", routes.institutRouter);
 app.use("/teacher", routes.teacherRouter);
 app.use("/specialty", routes.specialtyRouter);
 app.use("/group", routes.groupRouter);
+app.use("/student", routes.studentRouter);
 
 model.sequelize
     .sync()
