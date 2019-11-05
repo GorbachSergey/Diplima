@@ -77,3 +77,22 @@ exports.updateSubject = function(request, response) {
             res.json({ status: "Error" });
         });
 };
+
+exports.addTeacher = function(request, response) {
+    if (!request.body) return response.sendStatus(400);
+    const { id, name } = request.body;
+    model.Subject.update(
+        { name: name },
+        {
+            where: {
+                id: id
+            }   
+        }
+    )
+        .then(result => {
+            response.json({ status: "OK" });
+        })
+        .catch(err => {
+            res.json({ status: "Error" });
+        });
+};

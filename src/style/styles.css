@@ -1,6 +1,15 @@
-@import "./fonts.css";
-@import "./reset.css";
-@import url("https://fonts.googleapis.com/css?family=Inconsolata&display=swap");
+@import './fonts.css';
+@import './reset.css';
+@import url('https://fonts.googleapis.com/css?family=Inconsolata&display=swap');
+@font-face {
+    font-family: Poppins-Regular;
+    src: url('../fonts/poppins/Poppins-Regular.ttf');
+}
+
+@font-face {
+    font-family: Poppins-Bold;
+    src: url('../fonts/poppins/Poppins-Bold.ttf');
+}
 
 header {
     min-height: 100px;
@@ -9,7 +18,7 @@ header {
 }
 
 body {
-    font-family: "PT_Sans", sans-serif;
+    font-family: 'PT_Sans', sans-serif;
     background: #fafafa;
     background: repeat url(../images/background.png);
 }
@@ -21,7 +30,7 @@ footer {
 
 footer p {
     color: #fff;
-    font-family: "Courier New", Courier, monospace;
+    font-family: 'Courier New', Courier, monospace;
     text-align: center;
     padding-top: 10px;
 }
@@ -95,7 +104,7 @@ a:focus {
     min-width: 630px;
     max-width: 630px;
     /* background: #fafafa; */
-    font-family: "Inconsolata";
+    font-family: 'Inconsolata';
     color: #000;
     font-size: 14px;
     font-weight: bold;
@@ -110,7 +119,6 @@ a:focus {
 #sidebar > ul > li {
     border-bottom: 1px solid red;
     padding: 10px 0px 10px 10px;
-    /* font-size: 1.1em; */
     display: block;
 }
 
@@ -120,9 +128,12 @@ a:focus {
     cursor: pointer;
 }
 
+.submenu {
+    border-left: 1px solid black;
+}
+
 .submenu > li {
-    padding: 5px;
-    margin-left: 15px;
+    padding: 0px 0px 0px 20px;
 }
 
 .submenu > li:hover {
@@ -133,27 +144,25 @@ a:focus {
     position: relative;
 }
 
-.menu_item::after {
-    content: url("../images/sort-down.png");
+.menu_item::after,
+.menu_sub_item::after {
+    content: url('../images/arrow.png');
     display: block;
     position: absolute;
-    top: 30px;
+    top: 13px;
     left: 95%;
-    transform: translateY(-50%);
 }
 
-.menu_sub_item{
+.menu_sub_item {
     position: relative;
 }
-.menu_sub_item::after {
-    content: url("../images/sort-down.png");
+/* .menu_sub_item::after {
+    content: url("../images/arrow.png");
     display: block;
     position: absolute;
-    top: 25px;
+    top: 13px;
     left: 95%;
-    transform: translateY(-50%);
-}
-
+} */
 
 /* ---------------------------------------------------
     CONTENT STYLE
@@ -176,5 +185,54 @@ a:focus {
 }
 
 #sidebarCollapse:hover {
+    cursor: pointer;
+}
+
+/* ---------------------------------------------------
+    TABLE STYLES
+----------------------------------------------------- */
+
+table {
+    background-color: #fff;
+    width: 100%;
+}
+
+
+th,
+td {
+    text-align: center;
+    padding: 20px 15px;
+    font-size: 18px;
+    font-family: 'Inconsolata';
+    border: 1px solid #555555;
+    color: #555555;
+}
+
+th {
+    font-family: 'Poppins-Bold';
+    color: #ffffff;
+    background: #6c7ae0;
+}
+
+td {
+    text-align: left;
+}
+
+td.mark,
+td.pass {
+    text-align: center;
+    padding: 20px 0px;
+}
+
+tr {
+    font-family: 'Poppins-Regular';
+    font-size: 18px;
+    
+    line-height: 1.2;
+    font-weight: unset !important;
+}
+
+tr:hover {
+    background-color: #ececff;
     cursor: pointer;
 }

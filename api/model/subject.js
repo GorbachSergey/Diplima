@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
 
     Subject.associate = function(models) {
         models.Subject.belongsToMany(models.Teacher, { through: models.Enrolment });
+        models.Subject.hasMany(models.Mark, { onDelete: "cascade" });
     };
 
     return Subject;
