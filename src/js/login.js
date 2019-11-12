@@ -18,6 +18,8 @@ function login(event) {
         .then(res => res.json())
         .then(data => {
             localStorage.setItem('token', data.token);
+            localStorage.setItem('user', data.name);
+            localStorage.setItem('user_id', data.id);
             document.location.href = window.location.origin + "/src/public/index.html";
         });
 }

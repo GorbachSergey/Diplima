@@ -113,7 +113,7 @@ a:focus {
 }
 
 #sidebar.active {
-    margin-left: -630px;
+    display: none;
 }
 
 #sidebar > ul > li {
@@ -172,7 +172,7 @@ a:focus {
     width: 100%;
     padding: 20px;
     height: auto;
-    min-height: calc(100vh - 150px);
+    min-height: calc(100vh - 190px);
     transition: all 0.3s;
 }
 
@@ -197,15 +197,16 @@ table {
     width: 100%;
 }
 
-
 th,
 td {
     text-align: center;
-    padding: 20px 15px;
+    padding: 0px 15px;
+    height: 50px;
     font-size: 18px;
     font-family: 'Inconsolata';
     border: 1px solid #555555;
     color: #555555;
+    vertical-align: middle;
 }
 
 th {
@@ -220,19 +221,53 @@ td {
 
 td.mark,
 td.pass {
+    width: 100px;
     text-align: center;
-    padding: 20px 0px;
+    padding: 0px 0px;
 }
 
 tr {
     font-family: 'Poppins-Regular';
     font-size: 18px;
-    
+
     line-height: 1.2;
     font-weight: unset !important;
 }
 
-tr:hover {
-    background-color: #ececff;
+.table-button-container {
+    width: 40px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.table-button {
+    padding: 0px;
+    margin: 0px;
+    background-color: #ffffff;
+    border: none;
+}
+
+.table-button-icon {
+    width: 32px;
+    height: 32px;
+    border: none;
+}
+
+.table-button-icon:hover {
     cursor: pointer;
+}
+
+.input {
+    border: none;
+    cursor: pointer;
+    vertical-align: middle;
+    width: 100%;
+    height: 100%;
+    font-size: 18px;
+    font-family: 'Inconsolata';
+}
+
+td.mark .input,
+td.pass .input {
+    text-align: center;
 }

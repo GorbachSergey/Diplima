@@ -10,7 +10,6 @@ exports.getStudents = function(request, response) {
 
 exports.getStudentsByGroup = function(request, response) {
     let groupId = request.query.groupId;
-    let subjectId = request.query.subjectId;
     result = [];
     model.Student.findAll({
         where: { groupId: groupId },

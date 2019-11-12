@@ -6,7 +6,6 @@ export async function sendRequest(method, url, body) {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + localStorage.getItem('token')
             }
         });
     } else {

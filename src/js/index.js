@@ -1,7 +1,15 @@
 import { sendRequest } from './request.js';
 document.addEventListener('DOMContentLoaded', DOMLoaded);
 
-const USER = 'guest';
+let USER = null;
+if (localStorage.getItem('token')) {
+    USER = {
+        name: localStorage.getItem('user'),
+        id: localStorage.getItem('user_id'),
+        token: localStorage.getItem('token')
+    };
+}
+
 let sidebar = document.getElementById('sidebar');
 let toggleButton = document.getElementById('sidebarCollapse');
 toggleButton.addEventListener('click', toggleSideBar);
@@ -22,17 +30,6 @@ function displayInstitutList(instituts) {
         menu.appendChild(item);
     });
 }
-
-// function displaySpesialtyList(institut, speciaties){
-//     let ul = document.createElement("ul");
-//     ul.className = "submenu";
-//     ul.id = institut.dataset.type + institut.dataset.id;
-//     items.forEach(element => {
-//         let item = getMenuItem(loadType, element);
-//         ul.appendChild(item);
-//     });
-//     menu.appendChild(ul);
-// }
 
 function displaySubMenu(menu, items, loadType) {
     let ul = document.createElement('ul');
@@ -106,7 +103,7 @@ function onSidebarMenuClick(event) {
                     case 'subject':
                         loadType = 'student';
                         let groupId = target.parentElement.dataset.parentid;
-                        url = `${loadType}?groupId=${groupId}&subjectId=${target.dataset.id}`;
+                        url = `${loadType}?groupId=${groupId}`;
                         break;
                 }
 
@@ -116,8 +113,6 @@ function onSidebarMenuClick(event) {
                     } else {
                         displaySubMenu(target, result, loadType);
                     }
-                    //displayInstitutList(instituts);
-                    //document.getElementsByClassName("loader")[0].remove();
                 });
             }
         } else {
@@ -127,18 +122,29 @@ function onSidebarMenuClick(event) {
     }
 }
 
-function showStudentsList(students, subjectId) {
+async function showStudentsList(students, subjectId) {
+    let permission = false;
     table.tHead.innerHTML = '';
     table.tBodies[0].innerHTML = '';
-    table.tHead.appendChild(getTableHead());
-    table.setAttribute('data-subject_id', subjectId);
+    if (USER) {
+        let data = await checkTeacherPermission(subjectId);
+        permission = data.permission;
+    }
+    table.tHead.appendChild(getStudentsTableHead(permission));
+    table.setAttribute('data-subject-id', subjectId);
     students.forEach(student => {
-        let tr = getTabelRow(student, subjectId);
+        let tr = getTabelRow(student, subjectId, permission);
         table.tBodies[0].appendChild(tr);
     });
 }
 
-function getTableHead() {
+async function checkTeacherPermission(subjectId) {
+    let body = { teacherId: USER.id, subjectId: subjectId };
+    let result = await sendRequest('POST', 'teacher/check', body);
+    return result;
+}
+
+function getStudentsTableHead(permission) {
     let tr = document.createElement('tr');
     let thLastName = document.createElement('th');
     thLastName.innerHTML = 'Прізвище';
@@ -155,12 +161,18 @@ function getTableHead() {
     let thPass = document.createElement('th');
     thPass.innerHTML = 'Н/б';
     tr.appendChild(thPass);
+    if (permission) {
+        let thAction = document.createElement('th');
+        thAction.innerHTML = 'Операції';
+        thAction.setAttribute('colspan', 2);
+        tr.appendChild(thAction);
+    }
     return tr;
 }
 
-function getTabelRow(student, subjectId) {
+function getTabelRow(student, subjectId, permission) {
     let tr = document.createElement('tr');
-    tr.setAttribute('data-student_id', student.student_id);
+    tr.setAttribute('data-student-id', student.student_id);
     let tdLastName = document.createElement('td');
     tdLastName.innerHTML = student.lastName;
     tr.appendChild(tdLastName);
@@ -175,15 +187,44 @@ function getTabelRow(student, subjectId) {
     let tdPass = document.createElement('td');
     tdPass.className = 'pass';
 
+    if (permission) {
+        let inputMark = document.createElement('input');
+        inputMark.type = 'text';
+        inputMark.className = 'input';
+        tdMark.appendChild(inputMark);
+        let inputPass = document.createElement('input');
+        inputPass.type = 'text';
+        inputPass.className = 'input';
+        tdPass.appendChild(inputPass);
+    }
+
     for (let i = 0; i < student.marks.length; i++) {
         if (student.marks[i].subject_id == subjectId) {
-            tdMark.innerHTML = student.marks[i].mark;
-            tdPass.innerHTML = student.marks[i].pass;
+            if (permission) {
+                tdMark.firstElementChild.value = student.marks[i].mark;
+                tdPass.firstElementChild.value = student.marks[i].pass;
+            } else {
+                tdMark.innerHTML = student.marks[i].mark;
+                tdPass.innerHTML = student.marks[i].pass;
+            }
             break;
         }
     }
     tr.appendChild(tdMark);
     tr.appendChild(tdPass);
+
+    if (permission) {
+        let tdAdd = document.createElement('td');
+        tdAdd.className = 'table-button-container';
+        tdAdd.innerHTML =
+            "<button title='Зберегти' type='button' class='table-button add-btn'><img class='table-button-icon' alt='' src='../images/save.png'> </button>";
+        tr.appendChild(tdAdd);
+        let tdClean = document.createElement('td');
+        tdClean.className = 'table-button-container';
+        tdClean.innerHTML =
+            "<button title='Очистити' type='button' class='table-button clean-btn'><img class='table-button-icon' alt='' src='../images/clean.png'> </button>";
+        tr.appendChild(tdClean);
+    }
 
     return tr;
 }
