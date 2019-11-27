@@ -43,7 +43,23 @@ footer p {
     min-height: calc(100vh - 150px);
 }
 
-#loginForm {
+.error {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	border: 1px solid;
+    padding: 25px 10px 25px 50px;
+    display: none;
+	background-repeat: no-repeat;
+	background-position: 10px center;
+    width:30%;
+    border-radius: 15px;
+    margin-bottom: 20px;
+	color: #D8000C;
+	background-color: #FFBABA;
+	background-image: url(../images/error.png);
+}
+
+#loginForm, #guestBtn {
     width: 30%;
 }
 
@@ -117,14 +133,16 @@ a:focus {
 }
 
 #sidebar > ul > li {
-    border-bottom: 1px solid red;
+    border-bottom: 1px solid rgb(0, 82, 142);
     padding: 10px 0px 10px 10px;
     display: block;
 }
 
+#sidebar > ul > li:last-child {
+    margin-bottom: 50px;
+}
+
 #sidebar > ul > li:hover {
-    color: rgb(0, 82, 142);
-    background: #fff;
     cursor: pointer;
 }
 
@@ -136,10 +154,6 @@ a:focus {
     padding: 0px 0px 0px 20px;
 }
 
-.submenu > li:hover {
-    color: rgb(0, 82, 142);
-    background: red;
-}
 .menu_item {
     position: relative;
 }
@@ -265,6 +279,10 @@ tr {
     height: 100%;
     font-size: 18px;
     font-family: 'Inconsolata';
+}
+
+.red-border{
+    border: 2px solid red;
 }
 
 td.mark .input,

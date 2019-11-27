@@ -1,5 +1,4 @@
 export async function sendRequest(method, url, body) {
-    //return new Promise(function(resolve, reject) {
     let response;
     if (method == "GET") {
         response = await fetch(`http://localhost:3000/${url}`, {
@@ -13,7 +12,7 @@ export async function sendRequest(method, url, body) {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " +  localStorage.getItem('token')
+                Authorization: "Bearer " +  JSON.parse(localStorage.getItem('user_data')).token
             },
             body: JSON.stringify(body)
         });

@@ -14,6 +14,7 @@
 <body>
     <header></header>
     <div class="wrapper_login">
+        <div class="error"> </div>
         <form name="loginForm" role="form" id="loginForm" class="form-horizontal" method="POST">
             <div class="form-group">
                 <input class="form-control" required id="login" type="text" placeholder="Логін" name="login" />
@@ -25,7 +26,10 @@
                 <input class="btn btn-success btn-block" id="loginBtn" type="submit" value="Вхід" />
             </div>
         </form>
+        <button class="btn btn-success btn-block" id="guestBtn">Увійти гостем</button>
+
     </div>
+
     <footer>
         <p>Copyright© 2019 All rights reserved.</p>
     </footer>

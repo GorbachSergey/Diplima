@@ -1,5 +1,10 @@
 let loginForm = document.forms.loginForm;
 loginForm.addEventListener("submit", login);
+let guestLogin = document.getElementById('guestBtn');
+guestLogin.addEventListener('click', event => {
+    localStorage.removeItem('user_data');
+    document.location.href = window.location.origin + "/src/public/index.html";
+});
 
 function login(event) {
     event.preventDefault();
@@ -15,11 +20,23 @@ function login(event) {
         },
         body: JSON.stringify(data)
     })
-        .then(res => res.json())
+        .then(res => {
+            if(res.ok)
+                return res.json();
+            else{
+                throw new Error('Error');
+            }
+        })
         .then(data => {
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', data.name);
-            localStorage.setItem('user_id', data.id);
+            localStorage.setItem('user_data', JSON.stringify(data));
             document.location.href = window.location.origin + "/src/public/index.html";
+        }).catch(err => {
+            displayError();
         });
+}
+
+function displayError(){
+    let error = document.getElementsByClassName('error')[0];
+    error.style.display = 'block';
+    error.innerHTML = 'Логін або пароль введено не вірно! Спробуйте ще раз.'
 }

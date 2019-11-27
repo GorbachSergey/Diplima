@@ -28,7 +28,6 @@ exports.getStudentsByGroup = function(request, response) {
                     lastName: student.lastName,
                     middleName: student.middleName,
                     marks: student.Marks.map(mark => {
-                        console.log(mark);
                         return Object.assign(
                             {},
                             {
@@ -44,32 +43,6 @@ exports.getStudentsByGroup = function(request, response) {
         });
         response.json(resObj);  
     });
-    // model.Group.findByPk(groupId)
-    //     .then(group => {
-    //         if (!group) response.json({ error: 'Group not found!' });
-    //         group
-    //             .getStudents()
-    //             .then(res => {
-    //                 for (let i = 0; i < res.length; i++) {
-    //                     res[i]
-    //                         .getMarks({
-    //                             where: { SubjectId: subjectId },
-    //                             raw: true
-    //                         })
-    //                         .then(res1 => {
-    //                             console.log(res1);
-    //                             result.push(res1);
-    //                             console.log(result);
-    //                         });
-
-    //                 }
-    //                 return result;
-    //             }).then(q =>{
-    //                 response.json(q);
-    //             })
-    //             .catch(err => console.log(err));
-    //     })
-    //     .catch(err => response.json({ status: 'Error' }));
 };
 
 exports.addStudent = function(request, response) {

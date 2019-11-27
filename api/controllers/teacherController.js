@@ -47,7 +47,6 @@ exports.checkPermission = function(request, response) {
         .then(teacher => {
             teacher.getSubjects().then(subjects => {
                 result = subjects.findIndex(subject => subject.id == subjectId);
-                console.log(result);
                 if( result !== -1){
                     response.json({permission : true})
                 } else{
