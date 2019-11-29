@@ -15,11 +15,35 @@ let sidebarMenu = document.getElementById('sidebarMenu');
 sidebarMenu.addEventListener('click', onSidebarMenuClick);
 let table = document.getElementById('table_content');
 table.addEventListener('click', onTableClick);
+let exitBtn = document.getElementsByClassName('exit-btn')[0];
+exitBtn.addEventListener('click', exit);
 
 function DOMLoaded() {
+    setUserName();
     sendRequest('GET', 'institut').then(instituts => {
         displayInstitutList(instituts);
     });
+}
+
+function isAdmin() {
+    if (USER && USER.name === 'Admin') {
+        return true;
+    }
+    return false;
+}
+
+function setUserName() {
+    let userDiv = document.getElementsByClassName('userName')[0];
+    if (USER) {
+        userDiv.innerHTML = USER.name;
+    } else {
+        userDiv.innerHTML = '';
+    }
+}
+
+function exit() {
+    localStorage.removeItem('user_data');
+    document.location.href = window.location.origin + "/src/public/login.html";
 }
 
 function displayInstitutList(instituts) {
@@ -230,6 +254,7 @@ function getTabelRow(student, subjectId, permission) {
                 tdMark.innerHTML = student.marks[i].mark;
                 tdPass.innerHTML = student.marks[i].pass;
             }
+            tdMark.setAttribute('data-mark-id', student.marks[i].mark_id);
             break;
         }
     }
@@ -261,27 +286,41 @@ async function onTableClick(event) {
         let mark = tr.cells[3].firstElementChild.value;
         let pass = tr.cells[4].firstElementChild.value;
 
-        if (!/(100)|[0-9]{1,2}/.test(mark)) {
+        if (!/^(100)$|^\d{1,2}$/.test(mark)) {
             tr.cells[3].classList.add('red-border');
             return;
         }
 
         tr.cells[3].classList.remove('red-border');
 
-        if (!/(0)|[1-9]{1,2}/.test(pass)) {
+        if (!/^(0)$|^\d{1,2}$/.test(pass)) {
             tr.cells[4].classList.add('red-border');
             return;
         }
 
         tr.cells[4].classList.remove('red-border');
 
-        let body = {
-            studentId,
-            subjectId,
-            mark,
-            pass
-        };
-        let result = await sendRequest('POST', 'mark/create', body);
+        let body;
+
+        if (tr.cells[3].dataset.markId) {
+            let id = tr.cells[3].dataset.markId;
+            body = {
+                id,
+                mark,
+                pass
+            }
+            await sendRequest('POST', 'mark/update', body);
+        } else {
+            body = {
+                studentId,
+                subjectId,
+                mark,
+                pass
+            };
+            await sendRequest('POST', 'mark/create', body);
+        }
+
+
     }
 }
 

@@ -30,7 +30,7 @@ exports.loginTeacher = function(request, response) {
                     user.lastName +
                     ' ' +
                     user.firstName.charAt(0) +
-                    '. ' +
+                    '.' +
                     user.middleName.charAt(0) + '.';
                 response.json({ token: token, name: name, id: user.id });
             } else {
