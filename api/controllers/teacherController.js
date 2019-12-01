@@ -3,7 +3,7 @@ const bCrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const jwtSecret = 'qwerty';
 
-exports.getTeachers = function(request, response) {
+exports.getTeachers = function (request, response) {
     model.Teacher.findAll({ raw: true })
         .then(teachers => {
             response.json(teachers);
@@ -14,7 +14,7 @@ exports.getTeachers = function(request, response) {
         });
 };
 
-exports.loginTeacher = function(request, response) {
+exports.loginTeacher = function (request, response) {
     if (!request.body) return response.sendStatus(400);
     const { login, password } = request.body;
     model.Teacher.findOne({ where: { login: login }, raw: true })
@@ -26,12 +26,17 @@ exports.loginTeacher = function(request, response) {
             const isValid = bCrypt.compareSync(password, user.password);
             if (isValid) {
                 let token = jwt.sign(user.id.toString(), jwtSecret);
-                let name =
-                    user.lastName +
-                    ' ' +
-                    user.firstName.charAt(0) +
-                    '.' +
-                    user.middleName.charAt(0) + '.';
+                let name;
+                if (user.lastName == 'Admin') {
+                    name = 'Admin';
+                } else {
+                    name =
+                        user.lastName +
+                        ' ' +
+                        user.firstName.charAt(0) +
+                        '.' +
+                        user.middleName.charAt(0) + '.';
+                }
                 response.json({ token: token, name: name, id: user.id });
             } else {
                 response.status(401).json({ message: 'Invalid credentials!' });
@@ -41,19 +46,19 @@ exports.loginTeacher = function(request, response) {
 };
 
 
-exports.checkPermission = function(request, response) {
+exports.checkPermission = function (request, response) {
     const { subjectId, teacherId } = request.body;
     model.Teacher.findByPk(teacherId)
         .then(teacher => {
             teacher.getSubjects().then(subjects => {
                 result = subjects.findIndex(subject => subject.id == subjectId);
-                if( result !== -1){
-                    response.json({permission : true})
-                } else{
-                    response.json({permission : false})
+                if (result !== -1) {
+                    response.json({ permission: true })
+                } else {
+                    response.json({ permission: false })
                 }
             })
-           
+
         })
         .catch(err => {
             //result = getErrorResponseTemplate("database error");

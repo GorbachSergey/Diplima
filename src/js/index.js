@@ -52,6 +52,9 @@ function displayInstitutList(instituts) {
         let item = getMenuItem('institut', element);
         menu.appendChild(item);
     });
+    if (isAdmin()) {
+        menu.appendChild(getEditMenuItem('institut'));
+    }
 }
 
 function displaySubMenu(menu, items, loadType) {
@@ -63,7 +66,21 @@ function displaySubMenu(menu, items, loadType) {
         let item = getMenuItem(loadType, element);
         ul.appendChild(item);
     });
+
+    if (isAdmin()) {
+        ul.appendChild(getEditMenuItem(loadType));
+    }
+
     menu.appendChild(ul);
+}
+
+function getEditMenuItem(type) {
+    let li = document.createElement('li');
+    li.setAttribute('data-type', type);
+    li.setAttribute('edit', 'true');
+    li.classList.add('menu_item_edit');
+    li.innerHTML = 'РЕДАГУВАТИ';
+    return li;
 }
 
 function displayCourses(menu) {
@@ -84,10 +101,12 @@ function displayCourses(menu) {
 
 function getMenuItem(type, item) {
     let li = document.createElement('li');
-    // li.className = "menu_item";
     li.setAttribute('aria-expanded', 'false');
     li.setAttribute('data-type', type);
     li.setAttribute('data-id', item.id);
+    if (type == 'group') {
+        li.setAttribute('data-name', item.name);
+    }
     if (type == 'specialty') {
         li.innerHTML = `${item.code}-${item.name}`;
     } else {
@@ -101,6 +120,29 @@ function onSidebarMenuClick(event) {
         url = '',
         loadType = null;
 
+    if (target.hasAttribute('edit')) {
+        switch (target.dataset.type) {
+            case 'institut':
+                url = `institut`;
+                break;
+            case 'specialty':
+                url = `specialty?id=${target.parentElement.dataset.parentid}`;
+                break;
+            case 'group':
+                let courseId = target.parentElement.dataset.parentid;
+                let specId = target.parentElement.parentElement.parentElement.dataset.parentid;
+                url = `group?specId=${specId}&course=${courseId}`;
+                break;
+            case 'subject':
+                url = `subject?groupId=${target.parentElement.dataset.parentid}`;
+                break;
+        }
+        sendRequest('GET', url).then(data => {
+            displayEditTable(target.dataset.type, data);
+        });
+        return;
+    }
+
     if (target.hasAttribute('aria-expanded')) {
 
         if (target.dataset.type == 'subject') {
@@ -111,7 +153,7 @@ function onSidebarMenuClick(event) {
                 let groupId = target.parentElement.dataset.parentid;
                 url = `${loadType}?groupId=${groupId}`;
                 sendRequest('GET', url).then(result => {
-                    showStudentsList(result, target.dataset.id);
+                    showStudentsList(result, target);
                 });
                 return;
             }
@@ -134,7 +176,6 @@ function onSidebarMenuClick(event) {
                         loadType = 'course';
                         displayCourses(target);
                         return;
-                        break;
                     case 'course':
                         loadType = 'group';
                         let specId = target.parentElement.dataset.parentid;
@@ -144,19 +185,10 @@ function onSidebarMenuClick(event) {
                         loadType = 'subject';
                         url = `${loadType}?groupId=${target.dataset.id}`;
                         break;
-                        // case 'subject':
-                        //     loadType = 'student';
-                        //     let groupId = target.parentElement.dataset.parentid;
-                        //     url = `${loadType}?groupId=${groupId}`;
-                        //     break;
                 }
 
                 sendRequest('GET', url).then(result => {
-                    //if (loadType === 'student') {
-                    // showStudentsList(result, target.dataset.id);
-                    //} else {
                     displaySubMenu(target, result, loadType);
-                    //}
                 });
             }
         } else {
@@ -166,7 +198,9 @@ function onSidebarMenuClick(event) {
     }
 }
 
-async function showStudentsList(students, subjectId) {
+async function showStudentsList(students, target) {
+    let subjectId = target.dataset.id;
+    table.caption.innerHTML = target.parentElement.parentElement.dataset.name + ' ' + target.textContent;
     let permission = false;
     table.tHead.innerHTML = '';
     table.tBodies[0].innerHTML = '';
@@ -326,4 +360,128 @@ async function onTableClick(event) {
 
 function toggleSideBar() {
     sidebar.classList.toggle('active');
+}
+
+function displayEditTable(type, data) {
+    table.tHead.innerHTML = '';
+    table.tBodies[0].innerHTML = '';
+    table.tHead.appendChild(getEditTableHead(type));
+    data.forEach(element => {
+        let item = getEditTableData(type, element);
+        table.tBodies[0].appendChild(item);
+    });
+    table.tBodies[0].appendChild(getAddNewTableRow(type));
+}
+
+function getEditTableData(type, data) {
+    let tr = document.createElement('tr');
+    tr.setAttribute('data-id', data.id);
+    switch (type) {
+        case 'institut':
+            tr.appendChild(getTdWidhInput(data.name));
+            break;
+        case 'specialty':
+            tr.appendChild(getTdWidhInput(data.code));
+            tr.appendChild(getTdWidhInput(data.name));
+            break;
+        case 'group':
+            tr.appendChild(getTdWidhInput(data.course));
+            tr.appendChild(getTdWidhInput(data.name));
+            break;
+    }
+
+    setEditTableOperation(tr);
+    return tr;
+}
+
+function getAddNewTableRow(type) {
+    let tr = document.createElement('tr');
+    switch (type) {
+        case 'institut':
+            tr.appendChild(getTdWidhInput(''));
+            break;
+        case 'specialty':
+            tr.appendChild(getTdWidhInput(''));
+            tr.appendChild(getTdWidhInput(''));
+            break;
+        case 'group':
+            tr.appendChild(getTdWidhInput(''));
+            tr.appendChild(getTdWidhInput(''));
+            break;
+    }
+    let td = document.createElement('td');
+    td.className = 'table-button-container';
+    td.setAttribute('colspan', 2);
+    td.innerHTML =
+        "<button title='Додати' type='button' class='table-button '><img class='table-button-icon js-new-btn' alt='' src='../images/plus.png'> </button>";
+    tr.appendChild(td);
+    return tr;
+}
+
+function getTdWidhInput(value) {
+    let td = document.createElement('td');
+    let input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'input';
+    input.value = value;
+    td.appendChild(input);
+    return td;
+}
+
+function setEditTableOperation(tr) {
+    let tdUpdate = document.createElement('td');
+    tdUpdate.className = 'table-button-container';
+    tdUpdate.innerHTML =
+        "<button title='Оновити' type='button' class='table-button '><img class='table-button-icon js-edit-btn' alt='' src='../images/refresh-button.png'> </button>";
+    tr.appendChild(tdUpdate);
+    let tdRemove = document.createElement('td');
+    tdRemove.className = 'table-button-container';
+    tdRemove.innerHTML =
+        "<button title='Очистити' type='button' class='table-button '><img class='table-button-icon js-remove-btn' alt='' src='../images/delete-button.png'> </button>";
+    tr.appendChild(tdRemove);
+}
+
+
+
+function getEditTableHead(type) {
+    let tr = document.createElement('tr');
+    switch (type) {
+        case 'institut': {
+            table.caption.innerHTML = 'Редагувати список ННІ';
+            let name = document.createElement('th');
+            name.innerHTML = 'Назва';
+            tr.appendChild(name);
+            break;
+        }
+        case 'specialty': {
+            table.caption.innerHTML = 'Редагувати список спеціальностей';
+            let code = document.createElement('th');
+            code.innerHTML = 'Код';
+            tr.appendChild(code);
+            let name = document.createElement('th');
+            name.innerHTML = 'Назва';
+            tr.appendChild(name);
+            break
+        }
+        case 'group': {
+            table.caption.innerHTML = 'Редагувати список груп';
+            let course = document.createElement('th');
+            course.innerHTML = 'Курс';
+            tr.appendChild(course);
+            let name = document.createElement('th');
+            name.innerHTML = 'Назва';
+            tr.appendChild(name);
+            break
+        }
+
+        default:
+            break;
+    }
+
+    let thAction = document.createElement('th');
+    thAction.innerHTML = 'Операції';
+    thAction.setAttribute('colspan', 2);
+    tr.appendChild(thAction);
+
+    return tr;
 }
