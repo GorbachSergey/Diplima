@@ -408,6 +408,11 @@ function getAddNewTableRow(type) {
             tr.appendChild(getTdWidhInput(''));
             tr.appendChild(getTdWidhInput(''));
             break;
+        case 'subject':
+            tr.appendChild(getTdWidhInput(''));
+            let teacherTd = document.createElement('td');
+            
+            break;
     }
     let td = document.createElement('td');
     td.className = 'table-button-container';
