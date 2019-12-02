@@ -115,9 +115,8 @@ a:focus {
     margin-right: 20px;
 }
 
-.exit-btn{
+.btn-my{
     padding: 10px;
-    width: 100px;
     font-size: 17px;
     cursor: pointer;
     border: 2px solid rgb(0, 82, 142);
@@ -125,7 +124,24 @@ a:focus {
     background-color: #fff;
 }
 
+.exit-btn{
+    background-image: url('../images/open-exit-door.png');
+    background-repeat: no-repeat;
+    padding-left: 50px;
+    background-position: 10px center;
+}
+
+.teacher-btn{
+    display: none;
+    margin-right: 15px;
+    background-image: url('../images/professor.png');
+    background-repeat: no-repeat;
+    padding-left: 50px;
+    background-position: 10px center;
+}
+
 .userName{
+    display: none;
     overflow: hidden;
     margin-right: 25px;
     white-space: nowrap;
@@ -139,6 +155,7 @@ a:focus {
     padding-left: 45px;
     height: 50px;
 }
+
 /* ---------------------------------------------------
     SIDEBAR STYLE
 ----------------------------------------------------- */
@@ -309,12 +326,14 @@ tr {
     cursor: pointer;
 }
 
-.input {
+.input, .table_select{
     border: none;
     cursor: pointer;
     vertical-align: middle;
     width: 100%;
     height: 100%;
+    margin-left: -15px;
+    padding-left: 30px;
     font-size: 18px;
     font-family: 'Inconsolata';
 }
@@ -337,3 +356,4 @@ td.pass .input {
 .menu_item_edit{
     color: red;
 }
+

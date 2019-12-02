@@ -3,7 +3,8 @@ import {
 } from './request.js';
 document.addEventListener('DOMContentLoaded', DOMLoaded);
 
-let USER = null;
+let USER = null,
+    teacherArr = null;
 if (localStorage.getItem('user_data')) {
     USER = JSON.parse(localStorage.getItem('user_data'));
 }
@@ -17,12 +18,23 @@ let table = document.getElementById('table_content');
 table.addEventListener('click', onTableClick);
 let exitBtn = document.getElementsByClassName('exit-btn')[0];
 exitBtn.addEventListener('click', exit);
+let teacherBtn = document.getElementsByClassName('teacher-btn')[0];
+teacherBtn.addEventListener('click', displayTeacherTable);
+
+function displayTeacherTable() {
+    displayEditTable('teacher', teacherArr);
+}
 
 function DOMLoaded() {
     setUserName();
     sendRequest('GET', 'institut').then(instituts => {
         displayInstitutList(instituts);
     });
+    if (isAdmin()) {
+        sendRequest('GET', 'teacher').then(data => {
+            teacherArr = data;
+        });
+    }
 }
 
 function isAdmin() {
@@ -35,9 +47,14 @@ function isAdmin() {
 function setUserName() {
     let userDiv = document.getElementsByClassName('userName')[0];
     if (USER) {
-        userDiv.innerHTML = USER.name;
+        userDiv.style.display = 'block';
+        userDiv.innerHTML = USER.name;  
     } else {
         userDiv.innerHTML = '';
+    }
+
+    if (isAdmin()) {
+        teacherBtn.style.display = 'block';
     }
 }
 
@@ -388,6 +405,27 @@ function getEditTableData(type, data) {
             tr.appendChild(getTdWidhInput(data.course));
             tr.appendChild(getTdWidhInput(data.name));
             break;
+        case 'subject':
+            tr.appendChild(getTdWidhInput(data.name));
+            let selectTD = document.createElement('td');
+            let select = document.createElement('select');
+            select.classList.add('table_select')
+            select.setAttribute('size', '1');
+            for (let i = 0; i < teacherArr.length; i++) {
+                let option = document.createElement('option');
+                option.innerHTML = `${teacherArr[i].lastName} ${teacherArr[i].firstName.charAt(0)}.${teacherArr[i].middleName.charAt(0)}.`
+                select.appendChild(option);
+            }
+            selectTD.appendChild(select);
+            tr.appendChild(selectTD);
+            break;
+        case 'teacher':
+            tr.appendChild(getTdWidhInput(data.lastName));
+            tr.appendChild(getTdWidhInput(data.firstName));
+            tr.appendChild(getTdWidhInput(data.middleName));
+            tr.appendChild(getTdWidhInput(data.login));
+            tr.appendChild(getTdWidhInput(data.password));
+            break;
     }
 
     setEditTableOperation(tr);
@@ -410,8 +448,26 @@ function getAddNewTableRow(type) {
             break;
         case 'subject':
             tr.appendChild(getTdWidhInput(''));
-            let teacherTd = document.createElement('td');
-            
+            let selectTD = document.createElement('td');
+            let select = document.createElement('select');
+            select.classList.add('table_select')
+            select.setAttribute('size', '1');
+            for (let i = 0; i < teacherArr.length; i++) {
+                let option = document.createElement('option');
+                option.innerHTML = `${teacherArr[i].lastName} ${teacherArr[i].firstName.charAt(0)}.${teacherArr[i].middleName.charAt(0)}.`
+                select.appendChild(option);
+            }
+            selectTD.appendChild(select);
+            tr.appendChild(selectTD);
+            //let teacherTd = document.createElement('td');
+
+            break;
+        case 'teacher':
+            tr.appendChild(getTdWidhInput(''));
+            tr.appendChild(getTdWidhInput(''));
+            tr.appendChild(getTdWidhInput(''));
+            tr.appendChild(getTdWidhInput(''));
+            tr.appendChild(getTdWidhInput(''));
             break;
     }
     let td = document.createElement('td');
@@ -476,11 +532,36 @@ function getEditTableHead(type) {
             let name = document.createElement('th');
             name.innerHTML = 'Назва';
             tr.appendChild(name);
-            break
-        }
-
-        default:
             break;
+        }
+        case 'subject': {
+            table.caption.innerHTML = 'Редагувати список предметів';
+            let name = document.createElement('th');
+            name.innerHTML = 'Назва';
+            tr.appendChild(name);
+            let teacher = document.createElement('th');
+            teacher.innerHTML = 'Викладач';
+            tr.appendChild(teacher);
+            break;
+        }
+        case 'teacher': {
+            table.caption.innerHTML = 'Редагувати список викладачів';
+            let thLastName = document.createElement('th');
+            thLastName.innerHTML = 'Прізвище';
+            tr.appendChild(thLastName);
+            let thFirstName = document.createElement('th');
+            thFirstName.innerHTML = "Ім'я";
+            tr.appendChild(thFirstName);
+            let thMiddleName = document.createElement('th');
+            thMiddleName.innerHTML = 'По батькові';
+            tr.appendChild(thMiddleName);
+            let thLogin = document.createElement('th');
+            thLogin.innerHTML = 'Логін';
+            tr.appendChild(thLogin);
+            let thPass = document.createElement('th');
+            thPass.innerHTML = 'Пароль';
+            tr.appendChild(thPass);
+        }
     }
 
     let thAction = document.createElement('th');
